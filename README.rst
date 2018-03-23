@@ -20,10 +20,11 @@ Sample pillars
       collection_jitter: 2
       output:
         prometheus_client:
-          bind:
-            address: 0.0.0.0
-            port: 9126
-          engine: prometheus
+	  prom1:
+            bind:
+              address: 0.0.0.0
+              port: 9126
+            engine: prometheus
 
 Influx output
 -------------
@@ -32,13 +33,18 @@ Influx output
 
   telegraf:
     agent:
+      input:
+        cpu:
+          allcpus:
+	    interval: 10
       output:
         influxdb:
-          urls:
-            - http://127.0.0.1:8086
-          database: test-telegraf
-          write_consistency: any
-          timeout: 10s
+	  influx1:
+            urls:
+              - http://127.0.0.1:8086
+            database: test-telegraf
+            write_consistency: any
+            timeout: 10s
 
 Documentation and Bugs
 ======================

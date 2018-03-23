@@ -34,12 +34,13 @@ config_d_dir_agent_clean:
     - onchanges:
       - pkg: telegraf_packages_agent
 
-{%- for name,values in agent.input.iteritems() %}
+{%- for name,instances in agent.input.iteritems() %}
+{%- for instance,values in instances %}
 
 {%- if values is not mapping or values.get('enabled', True) %}
-input_{{ name }}_agent:
+input_{{ name }}_{{ instance }}_agent:
   file.managed:
-    - name: {{ agent.dir.config_d }}/input-{{ name }}.conf
+    - name: {{ agent.dir.config_d }}/input-{{ name }}-{{ instance }}.conf
     - source:
 {%- if values.template is defined %}
       - salt://{{ values.template }}
@@ -59,6 +60,7 @@ input_{{ name }}_agent:
       - service: telegraf_service_agent
     - defaults:
         name: {{ name }}
+        instance: {{ instance }}
 {%- if values is mapping %}
         values: {{ values }}
 {%- else %}
@@ -78,12 +80,14 @@ telegraf_user_in_group_{{ name }}:
 {%- endif %}
 
 {%- endfor %}
+{%- endfor %}
 
-{%- for name,values in agent.output.iteritems() %}
+{%- for name,instances in agent.output.iteritems() %}
+{%- for instance,values in instanes %}
 
-output_{{ name }}_agent:
+output_{{ name }}_{{ instance }}_agent:
   file.managed:
-    - name: {{ agent.dir.config_d }}/output-{{ name }}.conf
+    - name: {{ agent.dir.config_d }}/output-{{ name }}-{{ instance }}.conf
     - source: salt://telegraf/files/output/{{ name }}.conf
     - user: root
     - group: root
@@ -98,12 +102,14 @@ output_{{ name }}_agent:
       - service: telegraf_service_agent
     - defaults:
         name: {{ name }}
+        instance: {{ instance }}
 {%- if values is mapping %}
         values: {{ values }}
 {%- else %}
         values: {}
 {%- endif %}
 
+{%- endfor %}
 {%- endfor %}
 
 telegraf_service_agent:
