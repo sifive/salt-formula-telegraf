@@ -20,12 +20,14 @@
 {# Collect configuration from */meta/telegraf.yml #}
 {%- set telegraf_grains = {'telegraf': {'agent': {'input': {}}, 'remote_agent': {'input':{}}}} %}
 {%- for service_name, service in pillar.items() %}
-  {%- if service.get('_support', {}).get('telegraf', {}).get('enabled', False) %}
-    {%- set grains_fragment_file = service_name+'/meta/telegraf.yml' %}
-    {%- macro load_grains_file() %}{% include grains_fragment_file ignore missing %}{% endmacro %}
-    {%- set grains_yaml = load_grains_file()|load_yaml %}
-    {%- if grains_yaml is mapping %}
-      {%- set telegraf_grains = salt['grains.filter_by']({'default': telegraf_grains}, merge={'telegraf': grains_yaml}) %}
+  {%- if service is mapping %}
+    {%- if service.get('_support', {}).get('telegraf', {}).get('enabled', False) %}
+      {%- set grains_fragment_file = service_name+'/meta/telegraf.yml' %}
+      {%- macro load_grains_file() %}{% include grains_fragment_file ignore missing %}{% endmacro %}
+      {%- set grains_yaml = load_grains_file()|load_yaml %}
+      {%- if grains_yaml is mapping %}
+        {%- set telegraf_grains = salt['grains.filter_by']({'default': telegraf_grains}, merge={'telegraf': grains_yaml}) %}
+      {%- endif %}
     {%- endif %}
   {%- endif %}
 {%- endfor %}
