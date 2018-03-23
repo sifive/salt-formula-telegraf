@@ -31,8 +31,8 @@ config_d_dir_agent_clean:
   file.directory:
     - name: {{agent.dir.config_d}}
     - clean: True
-    - onchanges:
-      - pkg: telegraf_packages_agent
+    - require:
+      - file: config_d_dir_agent
 
 {%- for name,instances in agent.input.iteritems() %}
 {%- for instance,values in instances.iteritems() %}
@@ -53,8 +53,6 @@ input_{{ name }}_{{ instance }}_agent:
     - template: jinja
     - require:
       - pkg: telegraf_packages_agent
-      - file: config_d_dir_agent
-    - require_in:
       - file: config_d_dir_agent_clean
     - watch_in:
       - service: telegraf_service_agent
@@ -95,8 +93,6 @@ output_{{ name }}_{{ instance }}_agent:
     - template: jinja
     - require:
       - pkg: telegraf_packages_agent
-      - file: config_d_dir_agent
-    - require_in:
       - file: config_d_dir_agent_clean
     - watch_in:
       - service: telegraf_service_agent
