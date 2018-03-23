@@ -16,6 +16,8 @@ telegraf_config_agent:
     - template: jinja
     - require:
       - pkg: telegraf_packages_agent
+    - watch_in:
+      - service: telegraf_service_agent
     - context:
       agent: {{ agent }}
 
@@ -26,13 +28,6 @@ config_d_dir_agent:
     - mode: 755
     - require:
       - pkg: telegraf_packages_agent
-
-config_d_dir_agent_clean:
-  file.directory:
-    - name: {{agent.dir.config_d}}
-    - clean: True
-    - require:
-      - file: config_d_dir_agent
 
 {%- for name,instances in agent.input.iteritems() %}
 {%- for instance,values in instances.iteritems() %}
@@ -53,6 +48,8 @@ input_{{ name }}_{{ instance }}_agent:
     - template: jinja
     - require:
       - pkg: telegraf_packages_agent
+      - file: config_d_dir_agent
+    - require_in:
       - file: config_d_dir_agent_clean
     - watch_in:
       - service: telegraf_service_agent
@@ -93,6 +90,8 @@ output_{{ name }}_{{ instance }}_agent:
     - template: jinja
     - require:
       - pkg: telegraf_packages_agent
+      - file: config_d_dir_agent
+    - require_in:
       - file: config_d_dir_agent_clean
     - watch_in:
       - service: telegraf_service_agent
@@ -108,6 +107,14 @@ output_{{ name }}_{{ instance }}_agent:
 {%- endfor %}
 {%- endfor %}
 
+config_d_dir_agent_clean:
+  file.directory:
+    - name: {{agent.dir.config_d}}
+    - clean: True
+    - require_in:
+      - service: telegraf_service_agent
+
+
 telegraf_service_agent:
   service.running:
     - name: telegraf
@@ -115,7 +122,5 @@ telegraf_service_agent:
     {%- if grains.get('noservices') %}
     - onlyif: /bin/false
     {%- endif %}
-    - watch:
-      - file: telegraf_config_agent
 
 {%- endif %}
