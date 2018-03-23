@@ -31,8 +31,8 @@ config_d_dir_agent_clean:
   file.directory:
     - name: {{agent.dir.config_d}}
     - clean: True
-    - watch_in:
-      - service: telegraf_service_agent
+    - onchanges:
+      - pkg: telegraf_packages_agent
 
 {%- for name,values in agent.input.iteritems() %}
 
