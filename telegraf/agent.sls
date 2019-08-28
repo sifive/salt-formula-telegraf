@@ -3,10 +3,9 @@
 {%- if agent.get('enabled', False) %}
 
 telegraf_packages_agent:
-  pkg.installed:
+  pkg.latest:
     - names: {{ agent.pkgs }}
     - refresh: True
-    - version: 1.11.4-1
 
 telegraf_config_agent:
   file.managed:
