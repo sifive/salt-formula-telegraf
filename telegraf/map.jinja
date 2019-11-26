@@ -3,7 +3,14 @@
       'pkgs': ['telegraf'],
       'dir': {
         'config': '/etc/telegraf',
-        'config_d': '/etc/telegraf/telegraf.d'
+        'config_d': '/etc/telegraf/telegraf.d',
+      },
+    },
+    'RedHat': {
+      'pkgs': ['telegraf'],
+      'dir': {
+        'config': '/etc/telegraf',
+        'config_d': '/etc/telegraf/telegraf.d',
       },
     },
 }, merge=salt['pillar.get']('telegraf:agent')) %}
