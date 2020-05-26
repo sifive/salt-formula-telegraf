@@ -4,7 +4,7 @@
 
 telegraf_packages_agent:
   pkg.installed:
-    - names: {{ agent.pkgs }}
+    - names: {{ agent.pkgs|yaml }}
 
 telegraf_config_agent:
   file.managed:
