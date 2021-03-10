@@ -29,8 +29,8 @@ config_d_dir_agent:
     - require:
       - pkg: telegraf_packages_agent
 
-{%- for name,instances in agent.input.iteritems() %}
-{%- for instance,values in instances.iteritems() %}
+{%- for name,instances in agent.input.items() %}
+{%- for instance,values in instances.items() %}
 
 {%- if values is not mapping or values.get('enabled', True) %}
 input_{{ name }}_{{ instance }}_agent:
@@ -77,8 +77,8 @@ telegraf_user_in_group_{{ name }}:
 {%- endfor %}
 {%- endfor %}
 
-{%- for name,instances in agent.output.iteritems() %}
-{%- for instance,values in instances.iteritems() %}
+{%- for name,instances in agent.output.items() %}
+{%- for instance,values in instances.items() %}
 
 output_{{ name }}_{{ instance }}_agent:
   file.managed:
